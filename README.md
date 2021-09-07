@@ -28,7 +28,7 @@ Push the code up to Heroku to build the image and run the container:
 ##Postgres
 
 Create the database
-```heroku addons:create heroku-postgresql:hobby-dev -a afternoon-scrubland-88520```
+```heroku addons:create heroku-postgresql:dev -a afternoon-scrubland-88520```
 
 Once the database is up, run the migrations
 ```
