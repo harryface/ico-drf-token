@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Crypcentra ICO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.0/css/bulma.css" />
+
+    <style>
+        .centerall {
+            height: 70vh;
+            padding: 0;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="section">
+        <div id="app" class="container">
+            <nav class="level">
+                <p class="level-item has-text-centered">
+                    <button v-if="!isAuthenticated" v-on:click="swith_moment('register')" class="button is-primary is-fullwidth">
+                        <strong>Sign up</strong>
+                    </button>
+                    <button v-else v-on:click="swith_moment('bid')" class="button is-success is-light is-fullwidth" disabled>
+                        <strong>Make Bid</strong>
+                    </button>
+                </p>
+                <p class="level-item has-text-centered is-size-1">
+                    <img src="http://www.newdesignfile.com/postpic/2010/01/free-icons-ico-format_307657.png" alt="" style="height: 100px;">
+                </p>
+                <p class="level-item has-text-centered">
+                    <button v-if="!isAuthenticated" v-on:click="swith_moment('login')" class="button is-warning is-light is-fullwidth">
+                        <strong>Login</strong>
+                    </button>
+                    <button v-else v-on:click="logout()" class="button is-danger is-fullwidth">
+                        <strong>Logout</strong>
+                    </button>
+                </p>
+            </nav>
+
+            <div class="centerall" >
+                <div>
+                    <div class="notification is-info is-light" v-if="popup">
+                        [[popup]].
+                    </div>
+
+                    <div v-if="moment === 'register'" class="box">
+                        <div>
+                            <form @submit.prevent="register()">
+                                <div class="has-text-centered has-text-weight-light is-family-primary pb-5">
+                                    <h2 class="">Registration Form</h2>
+                                </div>
+
+                                <div class="field">
+                                    <label class="label">Email Address</label>
+                                    <p class="control">
+                                        <input class="input is-medium" type="email" placeholder="Email"
+                                            v-model="email" />
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Password</label>
+                                    <p class="control">
+                                        <input class="input is-medium" type="password" placeholder="Password"
+                                            v-model="password" />
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Confirm Password</label>
+                                    <p class="control">
+                                        <input class="input is-medium" type="password"
+                                            placeholder="Confirm Password" v-model="password_confirm" />
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <p class="control buttons">
+                                        <button class="button is-warning is-medium is-fullwidth" v-bind:class="{'is-loading' : isLoading}">Register</button>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div v-else-if="moment === 'login'" class="box">
+                        <div>
+                            <form @submit.prevent="login">
+                                <div class="has-text-centered has-text-weight-light is-family-primary pb-5">
+                                    <h2 class="">Login Form</h2>
+                                </div>
+
+                                <div class="field">
+                                    <label class="label">Email Address</label>
+                                    <p class="control">
+                                        <input class="input is-medium" type="email" placeholder="Email"
+                                            v-model="email" />
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Password</label>
+                                    <p class="control">
+                                        <input class="input is-medium" type="password" placeholder="Password"
+                                            v-model="password" />
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <p class="control buttons">
+                                        <button class="button is-primary is-medium is-fullwidth"  v-bind:class="{ 'is-loading': isLoading }">Login</button>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div v-else class="box">
+                        <div>
+                            <div class="has-text-centered has-text-weight-light is-family-primary pb-5">
+                                <p class="is-size-1">Register A Bid</p>
+                            </div>
+
+                            <form @submit.prevent="bid()">
+
+                                <div class="field">
+                                    <label class="label">Number of tokens</label>
+                                    <p class="control">
+                                        <input class="input is-medium" type="number"
+                                            placeholder="Number Of Tokens" v-model.number="number_of_tokens" />
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Bidding price</label>
+                                    <p class="control">
+                                        <input class="input is-medium" type="number" placeholder="Bidding Price"
+                                            v-model.number="bidding_price" />
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <p class="control buttons">
+                                        <button class="button is-primary is-medium is-fullwidth" v-bind:class="{ 'is-loading': isLoading }">Send Bid</button>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+    <!-- Development -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+
+        axios.defaults.withCredentials = true;
+
+        var app = new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                moment: 'login',
+                isLoading: false,
+                popup: '',
+                isAuthenticated: false,
+                email: '',
+                password: '',
+                password_confirm: '',
+                bidding_price: '',
+                number_of_tokens: '',
+            },
+            methods: {
+                swith_moment(info) {
+                    switch (info) {
+                        case 'login':
+                            this.moment = 'login'
+                            break;
+                        case 'register':
+                            this.moment = 'register'
+                            break;
+                        case 'bid':
+                            this.moment = 'bid'
+                    }
+                },
+
+                async register() {
+                    if (this.password !== this.password_confirm && this.email) {
+                        warning("InComplete", 'Email Needed/Password Must Match', 'error')
+                    } else {
+
+                        this.loading = true;
+
+                        try {
+                            await axios.post("register", {
+                                email: this.email,
+                                password: this.password,
+                                password_confirm: this.password_confirm,
+                            });
+
+                            this.loading = false;
+                            this.popup = "Account registered successfully";
+                            this.moment = "login";
+
+                        } catch (e) {
+                            console.log(e.response)
+
+                            this.loading = false;
+                            this.warning("An Issus", 'Something went wrong', 'error')
+                        }
+                    }
+                },
+
+                async login() {
+                    if (!this.email && !this.password) {
+                        Swal.fire("Input Error", "Field cannot be empty", "error");
+                    } else {
+
+                        this.loading = true;
+
+                        try {
+                            await axios.post("login", {
+                                email: this.email,
+                                password: this.password,
+                            });
+
+                            this.loading = false;
+                            this.popup = "Logged in successfully, you can now make your bid";
+                            this.moment = "bid";
+                            this.isAuthenticated = true;
+                        } catch (e) {
+
+                            this.loading = false;
+                            this.warning("Authorize Error", 'Kindly check your login details', 'error')
+
+                        }
+                    }
+                },
+
+                async bid() {
+                    if (!this.bidding_price && !this.number_of_tokens) {
+                        Swal.fire("Input Error", "Field cannot be empty", "error");
+                    } else if(this.bidding_price < this.number_of_tokens){
+                        Swal.fire("Input Error", "Bidding Price must be greater than the number of tokens", "error");
+                    }
+                    else {
+
+                        this.loading = true;
+
+                        try {
+                            await axios.post("bid", {
+                                bidding_price: this.bidding_price,
+                                number_of_tokens: this.number_of_tokens,
+                            });
+
+                            this.loading = false;
+                            this.warning("Bid Registered", 'Your bid has been registered, thanks.', 'success')
+
+                            this.moment = 'bid';
+                        } catch (e) {
+                            console.log(e)
+                            this.loading = false;
+                            this.warning("Unauthorised", 'Bidding window has elapsed', 'error')
+
+                        }
+                    }
+                },
+
+                async logout() {
+                    await axios.post("logout", {});
+                    this.isAuthenticated = false;
+                    this.moment = 'login'
+                },
+
+                warning(shout, message, type) {
+                    Swal.fire(shout, message, type);
+                },
+            },
+            async mounted() {
+                try {
+                    await axios.get("/user");
+                    this.moment = 'bid'
+                    this.isAuthenticated = true
+                } catch (e) {
+                    this.moment = 'login'
+                    this.isAuthenticated = false
+                }
+            }
+
+        })
+
+    </script>
+</body>
+
+</html>
