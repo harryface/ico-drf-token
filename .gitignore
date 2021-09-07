@@ -127,3 +127,18 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Enviroment Variable
+.env
+
+# SQlite
+db.sqlite3
+
+# REST Http
+rest.http
+
+# Migration
+*/migrations
+
+# __pycache__
+*/__pycache__
